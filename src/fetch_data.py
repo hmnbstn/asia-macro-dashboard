@@ -1,18 +1,6 @@
 import requests
 import pandas as pd
-
-response = requests.get(url)
-data = response.json()
-
-# Afficher la réponse API brute pour vérifier sa structure
-print(json.dumps(data, indent=4))
-
-# Vérifier si l'API retourne bien des données exploitables
-if isinstance(data, list) and len(data) > 1:
-    df = pd.DataFrame(data[1])  # Transforme les données en tableau
-else:
-    print("⚠️ Erreur : Clé '1' introuvable dans la réponse API !")
-    return
+import json  # Ajout pour éviter l’erreur avec print
 
 API_URLS = {
     "GDP": "https://api.worldbank.org/v2/country/{}/indicator/NY.GDP.MKTP.CD?format=json",
@@ -34,10 +22,21 @@ def fetch_data(indicator, country_code):
     """Récupère les données et les enregistre en CSV."""
     url = API_URLS[indicator].format(country_code)
     response = requests.get(url)
-    data = response.json()
-    df = pd.DataFrame(data[1])
-    df.to_csv(f"data/{indicator.lower()}.csv", index=False)
+    
+    try:
+        data = response.json()
+        
+        # Vérifier si l'API retourne une liste valide
+        if isinstance(data, list) and len(data) > 1:
+            df = pd.DataFrame(data[1])  # Transforme les données en tableau
+            df.to_csv(f"data/{indicator.lower()}.csv", index=False)
+        else:
+            print(f"⚠️ Erreur : Format de réponse inattendu pour {indicator} ({country_code})")
+    
+    except Exception as e:
+        print(f"❌ Erreur lors de la récupération des données pour {indicator} ({country_code}): {e}")
 
+# Exécuter la récupération des données
 for indicator in API_URLS:
     for country in COUNTRIES.keys():
         fetch_data(indicator, country)
