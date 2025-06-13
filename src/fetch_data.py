@@ -28,19 +28,21 @@ def fetch_data(indicator, country_code):
 
         data = response.json()
 
-        # Afficher la réponse brute pour analyse, mais limiter l'affichage
+        # Afficher la réponse brute pour analyse (limité aux premiers éléments)
         print(f"\n⚠️ Réponse API {indicator} ({country_code}) :")
         print(json.dumps(data[:2], indent=4))  # Affiche seulement les 2 premiers éléments
 
-        # Vérifier si la réponse contient bien des données exploitables
+        # Vérification avancée de la structure JSON
         if isinstance(data, list) and len(data) > 1:
-            # Vérifier si "value" existe pour éviter les structures incorrectes
-            if isinstance(data[1], dict) and "value" in data[1]:
-                df = pd.DataFrame(data[1]["value"])  # Extraire uniquement les valeurs utiles
-                df.to_csv(f"data/{indicator.lower()}.csv", index=False)
-                print(f"✅ Données enregistrées pour {indicator} ({country_code})")
+            if isinstance(data[1], dict):  # Vérifier si c'est bien un dictionnaire
+                if "value" in data[1]:  # Vérifier si "value" existe
+                    df = pd.DataFrame(data[1]["value"])  # Extraire uniquement les valeurs utiles
+                    df.to_csv(f"data/{indicator.lower()}.csv", index=False)
+                    print(f"✅ Données enregistrées pour {indicator} ({country_code})")
+                else:
+                    print(f"⚠️ Champ 'value' introuvable pour {indicator} ({country_code}), vérifie la structure JSON")
             else:
-                print(f"⚠️ Format JSON inattendu ou champ 'value' manquant pour {indicator} ({country_code})")
+                print(f"⚠️ Format JSON inattendu (data[1] n'est pas un dict) pour {indicator} ({country_code})")
         else:
             print(f"⚠️ Format inattendu ou données absentes pour {indicator} ({country_code})")
 
