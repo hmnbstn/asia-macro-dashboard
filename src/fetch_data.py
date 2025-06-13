@@ -7,33 +7,42 @@ API_URLS = {
     "Inflation": "https://api.worldbank.org/v2/country/{}/indicator/FP.CPI.TOTL.ZG?format=json",
     "Unemployment": "https://api.worldbank.org/v2/country/{}/indicator/SL.UEM.TOTL.ZS?format=json",
     "Trade Balance": "https://api.oecd.org/data/trade",
-    "Interest Rate": "https://www.imf.org/external/datamapper/api/v1/IR"  # Nouvelle URL IMF
+    "Interest Rate": "https://www.imf.org/external/datamapper/api/v1/IR"
 }
 
 COUNTRIES = ["CN", "IN", "JP", "SG", "KR"]
 
 def fetch_data(indicator, country_code):
-    """Récupère les données macroéconomiques depuis l'API et les enregistre en CSV."""
+    """Récupère les données macroéconomiques et affiche la réponse brute avant traitement."""
     url = API_URLS[indicator].format(country_code)
     response = requests.get(url)
 
     try:
+        # Afficher le statut de la requête API
+        print(f"\n🔍 [{indicator} - {country_code}] Statut de la requête : {response.status_code}")
+
+        # Vérifier si la requête API est réussie
+        if response.status_code != 200:
+            print(f"❌ Erreur API {indicator} ({country_code}) : Code {response.status_code}")
+            return
+
         data = response.json()
         
-        # Afficher la réponse brute pour analyse
-        print(f"\n🔍 Réponse API {indicator} ({country_code}) :")
-        print(json.dumps(data, indent=4))  # Formatage JSON pour lecture facile
+        # Afficher la réponse API brute pour Trade Balance et Interest Rate
+        if indicator in ["Trade Balance", "Interest Rate"]:
+            print(f"\n⚠️ Réponse brute API {indicator} ({country_code}) :")
+            print(json.dumps(data, indent=4))
 
-        # Vérifier si la réponse contient bien une liste exploitable
+        # Vérifier si la réponse contient bien des données exploitables
         if isinstance(data, list) and len(data) > 1:
             df = pd.DataFrame(data[1])
             df.to_csv(f"data/{indicator.lower()}.csv", index=False)
             print(f"✅ Données enregistrées pour {indicator} ({country_code})")
         else:
-            print(f"⚠️ Format inattendu ou données introuvables pour {indicator} ({country_code})")
+            print(f"⚠️ Format inattendu ou données absentes pour {indicator} ({country_code})")
 
     except json.JSONDecodeError:
-        print(f"❌ Impossible de récupérer {indicator} ({country_code}) → Vérifie l'URL API !")
+        print(f"❌ Impossible de décoder JSON pour {indicator} ({country_code}) → Vérifie l'API !")
     except Exception as e:
         print(f"❌ Erreur inattendue pour {indicator} ({country_code}) : {e}")
 
