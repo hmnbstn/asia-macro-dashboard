@@ -32,15 +32,21 @@ df_gdp = clean_data("data/gdp.csv")
 df_inflation = clean_data("data/inflation.csv")
 df_unemployment = clean_data("data/unemployment.csv")
 
-# Ajouter une moyenne asiatique
+# Vérifier les données chargées
+print("🔍 Vérification des données :")
+print("PIB :", df_gdp.head())
+print("Inflation :", df_inflation.head())
+print("Chômage :", df_unemployment.head())
+
+# Ajouter une moyenne asiatique pour chaque indicateur
 for df in [df_gdp, df_inflation, df_unemployment]:
     if df is not None:
         df_avg = df.groupby("date")["value"].mean().reset_index()
         df_avg["country"] = "Moyenne Asie"
         df = pd.concat([df, df_avg])
 
-# Liste des pays disponibles
-available_countries = df_gdp["country"].unique()
+# Correction : récupérer tous les pays disponibles dans toutes les données
+available_countries = sorted(list(set(df_gdp["country"].unique()) | set(df_inflation["country"].unique()) | set(df_unemployment["country"].unique())))
 
 # Interface du Dashboard
 app.layout = html.Div(style={"backgroundColor": "#000", "color": "#FFF", "padding": "20px"}, children=[
@@ -71,6 +77,9 @@ app.layout = html.Div(style={"backgroundColor": "#000", "color": "#FFF", "paddin
 def update_graphs(selected_country):
     """Met à jour les graphiques selon le pays sélectionné."""
     
+    print(f"📊 Données du pays sélectionné ({selected_country}) :")
+    print(df_gdp[df_gdp["country"] == selected_country].head())
+
     # Filtrer les données pour le pays sélectionné ou la moyenne
     df_gdp_filtered = df_gdp[df_gdp["country"] == selected_country]
     df_inflation_filtered = df_inflation[df_inflation["country"] == selected_country]
