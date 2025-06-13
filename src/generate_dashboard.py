@@ -62,10 +62,13 @@ app.layout = html.Div(style={"backgroundColor": "#000", "color": "#FFF", "paddin
 
 # Callback pour mettre à jour les graphiques dynamiquement
 @app.callback(
-    [dcc.Output("gdp-chart", "figure"),
-     dcc.Output("inflation-chart", "figure"),
-     dcc.Output("unemployment-chart", "figure")],
-    [dcc.Input("country-filter", "value")]
+    from dash.dependencies import Output, Input
+
+[Output("gdp-chart", "figure"),
+ Output("inflation-chart", "figure"),
+ Output("unemployment-chart", "figure")],
+[Input("country-filter", "value")]
+
 )
 def update_graphs(selected_country):
     """Met à jour les graphiques selon le pays sélectionné."""
