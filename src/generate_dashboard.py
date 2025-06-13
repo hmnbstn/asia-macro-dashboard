@@ -1,30 +1,48 @@
+import dash
+import dash_core_components as dcc
+import dash_html_components as html
 import pandas as pd
+import plotly.express as px
 
-TEMPLATE = """
-<html>
-<head>
-    <title>Asia Macro Dashboard</title>
-    <link rel="stylesheet" href="assets/styles.css">
-</head>
-<body>
-    <h1>Asia Macro Dashboard</h1>
-    <img src="assets/logo.gif" width="150">
-    <h2>Indicateurs Macroéconomiques</h2>
-    {tables}
-</body>
-</html>
-"""
+# Charger les données
+def load_data(indicator):
+    """Charge les données CSV de l’indicateur spécifié."""
+    file_path = f"data/{indicator}.csv"
+    try:
+        df = pd.read_csv(file_path)
+        return df
+    except FileNotFoundError:
+        print(f"❌ Fichier {file_path} introuvable.")
+        return None
 
-def generate_dashboard():
-    """Génère un fichier HTML contenant les indicateurs économiques."""
-    tables_html = ""
-    for file in ["gdp.csv", "inflation.csv", "unemployment.csv", "trade_balance.csv", "interest_rate.csv"]:
-        df = pd.read_csv(f"data/{file}")
-        tables_html += f"<h3>{file.replace('.csv', '').upper()}</h3>"
-        tables_html += df.to_html()
+# Initialiser l’application Dash
+app = dash.Dash(__name__)
 
-    html_content = TEMPLATE.replace("{tables}", tables_html)
-    with open("index.html", "w") as f:
-        f.write(html_content)
+# Charger les données principales
+df_gdp = load_data("gdp")
+df_inflation = load_data("inflation")
+df_unemployment = load_data("unemployment")
 
-generate_dashboard()
+# Créer la mise en page du dashboard
+app.layout = html.Div([
+    html.H1("📊 Dashboard Macroéconomique Asiatique"),
+    
+    dcc.Graph(
+        id="gdp-chart",
+        figure=px.line(df_gdp, x="date", y="value", color="country", title="Évolution du PIB")
+    ),
+
+    dcc.Graph(
+        id="inflation-chart",
+        figure=px.line(df_inflation, x="date", y="value", color="country", title="Inflation annuelle")
+    ),
+
+    dcc.Graph(
+        id="unemployment-chart",
+        figure=px.line(df_unemployment, x="date", y="value", color="country", title="Taux de chômage")
+    )
+])
+
+# Lancer le serveur Dash
+if __name__ == "__main__":
+    app.run_server(debug=True)
