@@ -1,38 +1,48 @@
 from dash import Dash, dcc, html
 import pandas as pd
 import plotly.express as px
-from dash.dependencies import Output, Input  # Correction du module Output/Input
+from dash.dependencies import Output, Input
+import ast  # Pour convertir les strings JSON en dictionnaires Python
 
-# Charger les données
-def load_data(indicator):
-    """Charge les données CSV de l’indicateur et ajoute une moyenne globale."""
-    file_path = f"data/{indicator}.csv"
+def clean_data(file_path):
+    """Charge et nettoie un fichier CSV en extrayant les bonnes colonnes."""
     try:
         df = pd.read_csv(file_path)
-        df["date"] = pd.to_datetime(df["date"])  # Assurer un bon format de date
-        df["country"] = df["country"].astype(str)
-        
-        # Calculer la moyenne de l'indicateur pour tous les pays
-        df_avg = df.groupby("date")["value"].mean().reset_index()
-        df_avg["country"] = "Moyenne Asie"
-        
-        return pd.concat([df, df_avg])  # Ajouter la moyenne aux données
-    except FileNotFoundError:
-        print(f"❌ Fichier {file_path} introuvable.")
+
+        # Extraire les valeurs des colonnes mal formatées
+        df["indicator"] = df["indicator"].apply(lambda x: ast.literal_eval(x)["value"] if isinstance(x, str) else x)
+        df["country"] = df["country"].apply(lambda x: ast.literal_eval(x)["value"] if isinstance(x, str) else x)
+
+        # Conserver uniquement les colonnes essentielles
+        df = df[["date", "country", "value"]]
+
+        # Transformer la date en format correct
+        df["date"] = pd.to_datetime(df["date"], errors="coerce")
+
+        return df
+    except Exception as e:
+        print(f"❌ Erreur lors du nettoyage de {file_path} : {e}")
         return None
 
-# Initialiser Dash avec un thème Bootstrap
+# Initialiser Dash
 app = Dash(__name__)
 
-# Charger les datasets
-df_gdp = load_data("gdp")
-df_inflation = load_data("inflation")
-df_unemployment = load_data("unemployment")
+# Nettoyer et charger les fichiers CSV
+df_gdp = clean_data("data/gdp.csv")
+df_inflation = clean_data("data/inflation.csv")
+df_unemployment = clean_data("data/unemployment.csv")
 
-# Liste des pays disponibles pour le filtre interactif
+# Ajouter une moyenne asiatique
+for df in [df_gdp, df_inflation, df_unemployment]:
+    if df is not None:
+        df_avg = df.groupby("date")["value"].mean().reset_index()
+        df_avg["country"] = "Moyenne Asie"
+        df = pd.concat([df, df_avg])
+
+# Liste des pays disponibles
 available_countries = df_gdp["country"].unique()
 
-# Mise en page du dashboard
+# Interface du Dashboard
 app.layout = html.Div(style={"backgroundColor": "#000", "color": "#FFF", "padding": "20px"}, children=[
     html.H1("📊 Dashboard Macroéconomique Asiatique", style={"textAlign": "center", "color": "#FF3131"}),
 
@@ -45,23 +55,13 @@ app.layout = html.Div(style={"backgroundColor": "#000", "color": "#FFF", "paddin
         style={"width": "50%", "margin": "auto", "color": "#000"}
     ),
 
-    # Graphique PIB
-    html.Div(children=[
-        dcc.Graph(id="gdp-chart")
-    ], style={"marginTop": "40px"}),
-
-    # Graphique Inflation
-    html.Div(children=[
-        dcc.Graph(id="inflation-chart")
-    ], style={"marginTop": "40px"}),
-
-    # Graphique Chômage
-    html.Div(children=[
-        dcc.Graph(id="unemployment-chart")
-    ], style={"marginTop": "40px"})
+    # Graphiques
+    html.Div(children=[dcc.Graph(id="gdp-chart")], style={"marginTop": "40px"}),
+    html.Div(children=[dcc.Graph(id="inflation-chart")], style={"marginTop": "40px"}),
+    html.Div(children=[dcc.Graph(id="unemployment-chart")], style={"marginTop": "40px"})
 ])
 
-# Callback pour mettre à jour les graphiques dynamiquement
+# Callback pour mettre à jour les graphiques
 @app.callback(
     [Output("gdp-chart", "figure"),
      Output("inflation-chart", "figure"),
@@ -88,6 +88,6 @@ def update_graphs(selected_country):
 
     return fig_gdp, fig_inflation, fig_unemployment
 
-# Lancer le serveur Dash
+# Lancer le dashboard
 if __name__ == "__main__":
-    app.run(debug=True)  # Correction: `app.run_server()` → `app.run()`
+    app.run(debug=True)
