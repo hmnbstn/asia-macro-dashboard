@@ -1,3 +1,11 @@
+response = requests.get(url)
+data = response.json()
+
+# Ajoute cette ligne pour voir la réponse brute
+print(json.dumps(data, indent=4))  # Affiche le JSON formaté
+
+df = pd.DataFrame(data[1])  # <-- Ici, le problème peut venir si [1] n'existe pas
+
 import requests
 import pandas as pd
 
