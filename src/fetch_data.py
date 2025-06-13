@@ -6,8 +6,8 @@ API_URLS = {
     "GDP": "https://api.worldbank.org/v2/country/{}/indicator/NY.GDP.MKTP.CD?format=json",
     "Inflation": "https://api.worldbank.org/v2/country/{}/indicator/FP.CPI.TOTL.ZG?format=json",
     "Unemployment": "https://api.worldbank.org/v2/country/{}/indicator/SL.UEM.TOTL.ZS?format=json",
-    "Trade Balance": "https://api.oecd.org/data/trade",  # À vérifier si réponse correcte
-    "Interest Rate": "https://api.imf.org/public/indicator/IR"  # À tester dans un navigateur
+    "Trade Balance": "https://api.oecd.org/data/trade",
+    "Interest Rate": "https://www.imf.org/external/datamapper/api/v1/IR"  # Nouvelle URL IMF
 }
 
 COUNTRIES = ["CN", "IN", "JP", "SG", "KR"]
