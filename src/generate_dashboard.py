@@ -1,6 +1,7 @@
 from dash import Dash, dcc, html
 import pandas as pd
 import plotly.express as px
+from dash.dependencies import Output, Input  # Correction du module Output/Input
 
 # Charger les données
 def load_data(indicator):
@@ -62,10 +63,9 @@ app.layout = html.Div(style={"backgroundColor": "#000", "color": "#FFF", "paddin
 
 # Callback pour mettre à jour les graphiques dynamiquement
 @app.callback(
-    from dash.dependencies import Output, Input
     [Output("gdp-chart", "figure"),
-    Output("inflation-chart", "figure"),
-    Output("unemployment-chart", "figure")],
+     Output("inflation-chart", "figure"),
+     Output("unemployment-chart", "figure")],
     [Input("country-filter", "value")]
 )
 def update_graphs(selected_country):
@@ -90,4 +90,4 @@ def update_graphs(selected_country):
 
 # Lancer le serveur Dash
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True)  # Correction: `app.run_server()` → `app.run()`
