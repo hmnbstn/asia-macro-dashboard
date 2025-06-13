@@ -28,15 +28,19 @@ def fetch_data(indicator, country_code):
 
         data = response.json()
 
-        # Afficher la réponse brute pour analyse
-        print(f"\n⚠️ Réponse brute API {indicator} ({country_code}) :")
-        print(json.dumps(data, indent=4))
+        # Afficher la réponse brute pour analyse, mais limiter l'affichage
+        print(f"\n⚠️ Réponse API {indicator} ({country_code}) :")
+        print(json.dumps(data[:2], indent=4))  # Affiche seulement les 2 premiers éléments
 
         # Vérifier si la réponse contient bien des données exploitables
         if isinstance(data, list) and len(data) > 1:
-            df = pd.DataFrame(data[1])
-            df.to_csv(f"data/{indicator.lower()}.csv", index=False)
-            print(f"✅ Données enregistrées pour {indicator} ({country_code})")
+            # Vérifier si "value" existe pour éviter les structures incorrectes
+            if isinstance(data[1], dict) and "value" in data[1]:
+                df = pd.DataFrame(data[1]["value"])  # Extraire uniquement les valeurs utiles
+                df.to_csv(f"data/{indicator.lower()}.csv", index=False)
+                print(f"✅ Données enregistrées pour {indicator} ({country_code})")
+            else:
+                print(f"⚠️ Format JSON inattendu ou champ 'value' manquant pour {indicator} ({country_code})")
         else:
             print(f"⚠️ Format inattendu ou données absentes pour {indicator} ({country_code})")
 
