@@ -19,6 +19,10 @@ def fetch_data(indicator, country_code):
 
     try:
         data = response.json()
+        
+        # Afficher la réponse brute pour analyse
+        print(f"\n🔍 Réponse API {indicator} ({country_code}) :")
+        print(json.dumps(data, indent=4))  # Formatage JSON pour lecture facile
 
         # Vérifier si la réponse contient bien une liste exploitable
         if isinstance(data, list) and len(data) > 1:
