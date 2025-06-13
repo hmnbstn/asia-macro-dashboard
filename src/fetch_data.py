@@ -1,13 +1,18 @@
+import requests
+import pandas as pd
+
 response = requests.get(url)
 data = response.json()
 
-# Ajoute cette ligne pour voir la réponse brute
-print(json.dumps(data, indent=4))  # Affiche le JSON formaté
+# Afficher la réponse API brute pour vérifier sa structure
+print(json.dumps(data, indent=4))
 
-df = pd.DataFrame(data[1])  # <-- Ici, le problème peut venir si [1] n'existe pas
-
-import requests
-import pandas as pd
+# Vérifier si l'API retourne bien des données exploitables
+if isinstance(data, list) and len(data) > 1:
+    df = pd.DataFrame(data[1])  # Transforme les données en tableau
+else:
+    print("⚠️ Erreur : Clé '1' introuvable dans la réponse API !")
+    return
 
 API_URLS = {
     "GDP": "https://api.worldbank.org/v2/country/{}/indicator/NY.GDP.MKTP.CD?format=json",
