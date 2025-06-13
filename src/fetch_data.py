@@ -28,21 +28,27 @@ def fetch_data(indicator, country_code):
 
         data = response.json()
 
-        # Afficher la réponse brute pour analyse (limité aux premiers éléments)
+        # Affichage limité des données brutes pour analyse
         print(f"\n⚠️ Réponse API {indicator} ({country_code}) :")
         print(json.dumps(data[:2], indent=4))  # Affiche seulement les 2 premiers éléments
 
-        # Vérification avancée de la structure JSON
+        # Vérification avancée du format JSON
         if isinstance(data, list) and len(data) > 1:
-            if isinstance(data[1], dict):  # Vérifier si c'est bien un dictionnaire
-                if "value" in data[1]:  # Vérifier si "value" existe
-                    df = pd.DataFrame(data[1]["value"])  # Extraire uniquement les valeurs utiles
-                    df.to_csv(f"data/{indicator.lower()}.csv", index=False)
-                    print(f"✅ Données enregistrées pour {indicator} ({country_code})")
-                else:
-                    print(f"⚠️ Champ 'value' introuvable pour {indicator} ({country_code}), vérifie la structure JSON")
+            if isinstance(data[1], dict):  # Vérifier si `data[1]` est un dictionnaire
+                df = pd.DataFrame(data[1].get("value", []))  # Récupérer les valeurs si disponibles
+            elif isinstance(data[1], list):  # Si c'est une liste, convertir directement en DataFrame
+                df = pd.DataFrame(data[1])
             else:
-                print(f"⚠️ Format JSON inattendu (data[1] n'est pas un dict) pour {indicator} ({country_code})")
+                print(f"⚠️ Format JSON inattendu pour {indicator} ({country_code}), données non exploitables")
+                return
+
+            # Sauvegarde des données en CSV
+            if not df.empty:
+                df.to_csv(f"data/{indicator.lower()}.csv", index=False)
+                print(f"✅ Données enregistrées pour {indicator} ({country_code})")
+            else:
+                print(f"⚠️ Aucune donnée exploitable pour {indicator} ({country_code})")
+
         else:
             print(f"⚠️ Format inattendu ou données absentes pour {indicator} ({country_code})")
 
