@@ -6,14 +6,14 @@ API_URLS = {
     "GDP": "https://api.worldbank.org/v2/country/{}/indicator/NY.GDP.MKTP.CD?format=json",
     "Inflation": "https://api.worldbank.org/v2/country/{}/indicator/FP.CPI.TOTL.ZG?format=json",
     "Unemployment": "https://api.worldbank.org/v2/country/{}/indicator/SL.UEM.TOTL.ZS?format=json",
-    "Trade Balance": "https://api.oecd.org/data/trade",
-    "Interest Rate": "https://www.imf.org/external/datamapper/api/v1/IR"
+    "Trade Balance": "https://api.worldbank.org/v2/country/{}/indicator/TX.VAL.MRCH.CD.WT?format=json",  # Banque Mondiale
+    "Interest Rate": "https://api.worldbank.org/v2/country/{}/indicator/FR.INR.RINR?format=json"  # Banque Mondiale
 }
 
 COUNTRIES = ["CN", "IN", "JP", "SG", "KR"]
 
 def fetch_data(indicator, country_code):
-    """Récupère les données macroéconomiques et affiche la réponse brute avant traitement."""
+    """Récupère les données macroéconomiques et les enregistre en CSV."""
     url = API_URLS[indicator].format(country_code)
     response = requests.get(url)
 
@@ -27,11 +27,10 @@ def fetch_data(indicator, country_code):
             return
 
         data = response.json()
-        
-        # Afficher la réponse API brute pour Trade Balance et Interest Rate
-        if indicator in ["Trade Balance", "Interest Rate"]:
-            print(f"\n⚠️ Réponse brute API {indicator} ({country_code}) :")
-            print(json.dumps(data, indent=4))
+
+        # Afficher la réponse brute pour analyse
+        print(f"\n⚠️ Réponse brute API {indicator} ({country_code}) :")
+        print(json.dumps(data, indent=4))
 
         # Vérifier si la réponse contient bien des données exploitables
         if isinstance(data, list) and len(data) > 1:
