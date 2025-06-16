@@ -15,3 +15,10 @@ def prepare_data(df, indicator):
 
         df = df[["date", indicator]]
     return df
+    
+#       __
+#    <(o )___      .---.
+#     (  ._> /    / $$$ \\
+#      `---'     |  ~~~  |
+#     /|  |\\     \\_____/
+#   hmnbstn © 2025
