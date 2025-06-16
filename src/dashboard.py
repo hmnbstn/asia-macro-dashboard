@@ -29,6 +29,22 @@ def run_dashboard():
         "trade_balance": "Trade Balance (Billion USD)"
     }
 
+    if indicators:
+        st.markdown("### Latest Indicators")
+        cols = st.columns(len(indicators))
+        for i, indicator in enumerate(indicators):
+            df = fetch_indicator(country, indicator)
+            df = prepare_data(df, indicator)
+
+            if not df.empty:
+                latest_value = df[indicator].iloc[-1]
+                latest_year = df["date"].dt.year.iloc[-1]
+                label = indicator_labels[indicator]
+                formatted_value = f"{latest_value:,.2f}" if indicator in ["gdp", "trade_balance"] else f"{latest_value:.2f}%"
+                cols[i].metric(label, formatted_value, f"Year: {latest_year}")
+
+        st.markdown("---")
+
     for indicator in indicators:
         df = fetch_indicator(country, indicator)
         df = prepare_data(df, indicator)
