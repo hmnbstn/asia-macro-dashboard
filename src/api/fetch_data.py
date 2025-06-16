@@ -53,3 +53,10 @@ def fetch_indicator(country, indicator):
     os.makedirs(CACHE_DIR, exist_ok=True)
     df.to_csv(cache_file, index=False)
     return df
+
+#       __
+#    <(o )___      .---.
+#     (  ._> /    / $$$ \\
+#      `---'     |  ~~~  |
+#     /|  |\\     \\_____/
+#   hmnbstn © 2025
