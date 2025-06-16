@@ -7,9 +7,8 @@ from src.api.fetch_data import fetch_indicator
 from src.processing.clean_data import prepare_data
 
 def run_dashboard():
-    st.set_page_config(page_title="Asia Macro Dashboard", layout="wide")  # MUST be first Streamlit command
+    st.set_page_config(page_title="Asia Macro Dashboard", layout="wide")
 
-    # Logo display
     logo = Image.open("assets/logo.gif")
     st.image(logo, width=80)
     st.title("📈 Asia Macro Dashboard")
@@ -60,5 +59,51 @@ def run_dashboard():
                 template="plotly_dark",
                 line_shape="linear"
             )
-            fig.update_traces(line=dict(color="red"))  # Neon red-style
+            fig.update_traces(line=dict(color="red"))
             st.plotly_chart(fig, use_container_width=True)
+
+    # Optional: Show regional map for one selected indicator
+    if len(indicators) == 1 and st.checkbox("Show Map", value=False):
+        indicator = indicators[0]
+        values, iso3, lats, lons = [], [], [], []
+
+        iso_mapping = {
+            "China": ("CHN", 35.0, 103.0),
+            "Japan": ("JPN", 36.0, 138.0),
+            "Hong Kong": ("HKG", 22.3, 114.2),
+            "Singapore": ("SGP", 1.3, 103.8),
+            "South Korea": ("KOR", 37.6, 127.8)
+        }
+
+        for country_name in iso_mapping:
+            df = fetch_indicator(country_name, indicator)
+            df = prepare_data(df, indicator)
+            if not df.empty:
+                val = df[indicator].iloc[-1]
+                values.append(val)
+                code, lat, lon = iso_mapping[country_name]
+                iso3.append(code)
+                lats.append(lat)
+                lons.append(lon)
+
+        map_df = pd.DataFrame({
+            "iso3": iso3,
+            "value": values,
+            "lat": lats,
+            "lon": lons
+        })
+
+        st.subheader(f"Regional View — {indicator_labels[indicator]}")
+        fig_map = px.scatter_geo(
+            map_df,
+            lat="lat",
+            lon="lon",
+            text="iso3",
+            size="value",
+            color="value",
+            color_continuous_scale="reds",
+            projection="natural earth",
+            title="Asian Macro Indicator Map"
+        )
+        fig_map.update_geos(fitbounds="locations", visible=False)
+        st.plotly_chart(fig_map, use_container_width=True)
