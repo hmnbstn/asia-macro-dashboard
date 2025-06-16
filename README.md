@@ -1,4 +1,19 @@
-# asia-macro-dashboard
+
+# asia-macro-dashboard/
+# ├── src/
+# │   ├── api/
+# │   │   ├── __init__.py
+# │   │   └── fetch_data.py
+# │   ├── processing/
+# │   │   ├── __init__.py
+# │   │   └── clean_data.py
+# │   └── dashboard.py
+# ├── data/
+# ├── assets/
+# ├── main.py
+# ├── requirements.txt
+# └── README.md
+
 """
 # 🌏 Asia Macro Dashboard
 
