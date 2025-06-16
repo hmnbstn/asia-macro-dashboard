@@ -3,21 +3,6 @@
   <img src="assets/logo.gif" alt="Asia Macro Logo" width="120"/>
 </p>
 
-# asia-macro-dashboard/
-├── src/
-│   ├── api/
-│   │   ├── __init__.py
-│   │   └── fetch_data.py
-│   ├── processing/
-│   │   ├── __init__.py
-│   │   └── clean_data.py
-│   └── dashboard.py
-├── data/
-├── assets/
-├── main.py
-├── requirements.txt
-└── README.md
-
 """
 # 🌏 Asia Macro Dashboard
 
@@ -38,3 +23,9 @@ Deployable on Streamlit Cloud: [https://streamlit.io/cloud](https://streamlit.io
 Add your API key `NINJA_API_KEY` in a `.env` file for interest rate data.
 
 """
+  __
+<(o )___      .---.
+ (  ._> /    / $$$ \\
+  `---'     |  ~~~  |
+ /|  |\\     \\_____/
+hmnbstn © 2025
