@@ -62,6 +62,37 @@ def run_dashboard():
             fig.update_traces(line=dict(color="red"))
             st.plotly_chart(fig, use_container_width=True)
 
+    # Comparison section
+    st.markdown("---")
+    st.subheader("📊 Compare Indicators Across Countries")
+    selected_countries = st.multiselect(
+        "Select countries to compare",
+        ["China", "Japan", "Hong Kong", "Singapore", "South Korea"],
+        default=["China", "Japan"]
+    )
+    compare_indicator = st.selectbox("Select an indicator to compare", ["gdp", "inflation", "unemployment", "interest_rate", "trade_balance"])
+
+    if selected_countries and compare_indicator:
+        compare_data = pd.DataFrame()
+        for c in selected_countries:
+            df = fetch_indicator(c, compare_indicator)
+            df = prepare_data(df, compare_indicator)
+            df["Country"] = c
+            compare_data = pd.concat([compare_data, df])
+
+        if not compare_data.empty:
+            label = indicator_labels[compare_indicator]
+            st.markdown(f"#### {label} — Comparison")
+            fig_compare = px.line(
+                compare_data,
+                x="date",
+                y=compare_indicator,
+                color="Country",
+                title=f"{label} Comparison",
+                template="plotly_dark"
+            )
+            st.plotly_chart(fig_compare, use_container_width=True)
+
     # Optional: Show regional map for one selected indicator
     if len(indicators) == 1 and st.checkbox("Show Map", value=False):
         indicator = indicators[0]
