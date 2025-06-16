@@ -50,5 +50,6 @@ def fetch_indicator(country, indicator):
         records = json_data[1] if len(json_data) > 1 else []
         df = pd.DataFrame(records)
 
+    os.makedirs(CACHE_DIR, exist_ok=True)
     df.to_csv(cache_file, index=False)
     return df
