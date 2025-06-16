@@ -1,20 +1,17 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+from PIL import Image
 
 from src.api.fetch_data import fetch_indicator
 from src.processing.clean_data import prepare_data
-from PIL import Image
-
-st.set_page_config(page_title="Asia Macro Dashboard", layout="wide")
-
-# Logo
-logo = Image.open("assets/logo.gif")
-st.image(logo, width=80)
-st.title("📈 Asia Macro Dashboard")
 
 def run_dashboard():
-    st.set_page_config(page_title="Asia Macro Dashboard", layout="wide")
+    st.set_page_config(page_title="Asia Macro Dashboard", layout="wide")  # MUST be first Streamlit command
+
+    # Logo display
+    logo = Image.open("assets/logo.gif")
+    st.image(logo, width=80)
     st.title("📈 Asia Macro Dashboard")
 
     country = st.sidebar.selectbox("Select a country", ["China", "Japan", "Hong Kong", "Singapore", "South Korea"])
