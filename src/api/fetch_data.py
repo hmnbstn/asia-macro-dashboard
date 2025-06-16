@@ -1,6 +1,9 @@
 import os
 import requests
 import pandas as pd
+from dotenv import load_dotenv
+
+load_dotenv()
 
 CACHE_DIR = "data"
 API_URLS = {
@@ -27,7 +30,7 @@ COUNTRY_NAMES = {
     "South Korea": "South Korea"
 }
 
-API_KEY = os.getenv("NINJA_API_KEY")  # For interest rate endpoint
+API_KEY = os.getenv("NINJA_API_KEY", "YLp1GfgZ1gSpSfq7FRQ3dg==dt3X4lGNY5ljnjiV")  # fallback to actual key if .env missing
 
 def fetch_indicator(country, indicator):
     cache_file = f"{CACHE_DIR}/{country}_{indicator}.csv"
