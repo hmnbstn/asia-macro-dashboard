@@ -1,4 +1,8 @@
 
+<p align="center">
+  <img src="assets/logo.gif" alt="Asia Macro Logo" width="120"/>
+</p>
+
 # asia-macro-dashboard/
 ├── src/
 │   ├── api/
