@@ -4,6 +4,14 @@ import plotly.express as px
 
 from src.api.fetch_data import fetch_indicator
 from src.processing.clean_data import prepare_data
+from PIL import Image
+
+st.set_page_config(page_title="Asia Macro Dashboard", layout="wide")
+
+# Logo
+logo = Image.open("assets/logo.gif")
+st.image(logo, width=80)
+st.title("📈 Asia Macro Dashboard")
 
 def run_dashboard():
     st.set_page_config(page_title="Asia Macro Dashboard", layout="wide")
