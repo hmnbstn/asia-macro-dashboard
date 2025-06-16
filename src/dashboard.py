@@ -123,3 +123,15 @@ def run_dashboard():
             font=dict(color='white')
         )
         st.plotly_chart(fig_map, use_container_width=True)
+
+    # Footer
+    st.markdown("---")
+    st.markdown("""
+    <div style='text-align: center;'>
+        <img src='assets/logo.gif' width='40'><br>
+        <sub>Data from <a href='https://data.worldbank.org' target='_blank'>World Bank</a>,
+        <a href='https://fred.stlouisfed.org/' target='_blank'>FRED</a>,
+        and <a href='https://api-ninjas.com/api/interestrate' target='_blank'>API Ninjas</a></sub><br>
+        <sub><b>hmnbstn</b></sub>
+    </div>
+    """, unsafe_allow_html=True)
