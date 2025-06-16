@@ -80,8 +80,8 @@ def run_dashboard():
             df = prepare_data(df, indicator)
             if not df.empty:
                 val = df[indicator].iloc[-1]
-                values.append(val)
                 code, lat, lon = iso_mapping[country_name]
+                values.append(val)
                 iso3.append(code)
                 lats.append(lat)
                 lons.append(lon)
@@ -105,5 +105,21 @@ def run_dashboard():
             projection="natural earth",
             title="Asian Macro Indicator Map"
         )
-        fig_map.update_geos(fitbounds="locations", visible=False)
+        fig_map.update_geos(
+            showland=True,
+            landcolor='rgb(20, 20, 20)',
+            showocean=True,
+            oceancolor='rgb(10, 10, 40)',
+            showlakes=True,
+            lakecolor='rgb(20, 20, 60)',
+            showcountries=True,
+            bgcolor='rgb(0, 0, 0)',
+            fitbounds="locations"
+        )
+        fig_map.update_layout(
+            geo=dict(projection_type="natural earth"),
+            plot_bgcolor='rgba(0,0,0,0)',
+            paper_bgcolor='rgba(0,0,0,0)',
+            font=dict(color='white')
+        )
         st.plotly_chart(fig_map, use_container_width=True)
