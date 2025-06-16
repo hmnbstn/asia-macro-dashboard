@@ -62,7 +62,7 @@ def run_dashboard():
             fig.update_traces(line=dict(color="red"))
             st.plotly_chart(fig, use_container_width=True)
 
-    # Comparison section
+    # Section comparaison
     st.markdown("---")
     st.subheader("📊 Compare Indicators Across Countries")
     selected_countries = st.multiselect(
@@ -93,7 +93,7 @@ def run_dashboard():
             )
             st.plotly_chart(fig_compare, use_container_width=True)
 
-    # Optional: Show regional map for one selected indicator
+    # Carte optionel à partir de plotly
     if len(indicators) == 1 and st.checkbox("Show Map", value=False):
         indicator = indicators[0]
         values, iso3, lats, lons = [], [], [], []
@@ -166,3 +166,10 @@ def run_dashboard():
         <sub><b>hmnbstn</b></sub>
     </div>
     """, unsafe_allow_html=True)
+
+#       __
+#    <(o )___      .---.
+#     (  ._> /    / $$$ \\
+#      `---'     |  ~~~  |
+#     /|  |\\     \\_____/
+#   hmnbstn © 2025
