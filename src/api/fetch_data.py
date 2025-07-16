@@ -55,8 +55,8 @@ def fetch_indicator(country, indicator):
     return df
 
 #       __
-#    <(o )___      .---.
-#     (  ._> /    / $$$ \\
-#      `---'     |  ~~~  |
-#     /|  |\\     \\_____/
+#    <(o )___    
+#     (  ._> /   
+#      `---'     
+#     /|  |\\     
 #   hmnbstn © 2025
